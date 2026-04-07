@@ -218,11 +218,16 @@
     <strong>Pasos (única vez):</strong>
     <ol>
       <li>Copie <code>vlc-publicidad.ps1</code> a cualquier carpeta accesible.</li>
-      <li>Haga clic derecho sobre el archivo → <em>Ejecutar con PowerShell</em>.<br>
-          Si solicita permisos de ejecución, confirme con <em>Sí</em>.</li>
-      <li>También puede ejecutarlo desde PowerShell con el parámetro <code>-Setup</code>:<br>
+      <li>Abra <strong>PowerShell</strong> y navegue hasta esa carpeta:<br>
+          <code>cd C:\ruta\donde\guardó\el\script</code></li>
+      <li>Ejecute el script con el parámetro <code>-Setup</code>:<br>
           <code>.\vlc-publicidad.ps1 -Setup</code></li>
     </ol>
+  </div>
+  <div class="warn">
+    <strong>Importante:</strong> El script <em>solo se instala</em> cuando se ejecuta con
+    <code>-Setup</code> desde PowerShell. Sin ese parámetro únicamente lanza VLC
+    (es el modo que usan los accesos directos ya instalados).
   </div>
   <p>Durante la instalación el script:</p>
   <ul>
@@ -265,31 +270,24 @@
     cerrarlo es el icono del área de notificaciones o el Administrador de tareas.
   </div>
 
-  <h2>7. Desactivar notificaciones de VLC</h2>
+  <h2>7. Desactivar notificaciones de Windows para VLC</h2>
   <p>
-    Para evitar que las alertas de VLC (actualizaciones, privacidad, etc.) interrumpan
-    la reproducción, desactívelas la primera vez que abra VLC normalmente:
+    Windows puede mostrar notificaciones grises (globos o banners) generadas por VLC
+    que interrumpen la pantalla de publicidad. Para desactivarlas:
   </p>
   <div class="step-box">
     <ol>
-      <li>Abra VLC → menú <strong>Herramientas</strong> → <strong>Preferencias</strong>
-          <em>(Ctrl + P)</em>.</li>
-      <li>En la sección <strong>Interfaz</strong>, desmarque:<br>
-          <em>"Buscar actualizaciones al iniciar"</em></li>
-      <li>Haga clic en <strong>Guardar</strong>.</li>
-      <li>En el primer arranque de VLC, si aparece una ventana de política de privacidad,
-          elija <strong>"No permitir metadatos"</strong> y confirme.</li>
+      <li>Abra <strong>Configuración de Windows</strong>
+          (<em>tecla Windows + I</em>).</li>
+      <li>Vaya a <strong>Sistema</strong> → <strong>Notificaciones y acciones</strong>.</li>
+      <li>En la lista de aplicaciones busque <strong>VLC media player</strong>
+          y desactive el interruptor.</li>
     </ol>
   </div>
-  <p>
-    Adicionalmente, desde la configuración de Windows puede silenciar las notificaciones
-    de VLC por completo:
-  </p>
-  <div class="step-box">
-    <ol>
-      <li>Abra <strong>Configuración</strong> → <strong>Sistema</strong> → <strong>Notificaciones y acciones</strong>.</li>
-      <li>Busque <strong>VLC media player</strong> en la lista y desactive el interruptor.</li>
-    </ol>
+  <div class="tip">
+    <strong>Tip:</strong> Si prefiere desactivar todas las notificaciones de una vez,
+    apague el interruptor principal <em>"Recibir notificaciones de aplicaciones y otros
+    remitentes"</em> en la misma pantalla.
   </div>
 
   <h2>8. Actualizar el contenido de publicidad</h2>
