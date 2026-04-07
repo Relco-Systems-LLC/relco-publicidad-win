@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Manual – Publicidad RELCO</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', Arial, sans-serif;
+    font-size: 11pt;
+    color: #1a1a1a;
+    background: #fff;
+    line-height: 1.6;
+  }
+
+  /* ── Portada ── */
+  .cover {
+    page-break-after: always;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #003087;
+    color: #fff;
+    text-align: center;
+    padding: 60px;
+  }
+  .cover .logo-text {
+    font-size: 36pt;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #fff;
+  }
+  .cover .logo-sub {
+    font-size: 13pt;
+    letter-spacing: 6px;
+    color: #a0b8e0;
+    margin-top: 6px;
+    text-transform: uppercase;
+  }
+  .cover h1 {
+    font-size: 22pt;
+    font-weight: 700;
+    margin-top: 50px;
+    color: #fff;
+  }
+  .cover .subtitle {
+    font-size: 13pt;
+    color: #a0b8e0;
+    margin-top: 12px;
+  }
+  .cover .version {
+    margin-top: 60px;
+    font-size: 9pt;
+    color: #6080b0;
+    letter-spacing: 1px;
+  }
+
+  /* ── Contenido ── */
+  .content {
+    padding: 48px 56px;
+    max-width: 750px;
+    margin: 0 auto;
+  }
+
+  h2 {
+    font-size: 15pt;
+    font-weight: 700;
+    color: #003087;
+    margin-top: 36px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #003087;
+  }
+
+  h3 {
+    font-size: 11.5pt;
+    font-weight: 600;
+    color: #1a4080;
+    margin-top: 22px;
+    margin-bottom: 6px;
+  }
+
+  p { margin-bottom: 10px; }
+
+  ul, ol {
+    margin-left: 20px;
+    margin-bottom: 12px;
+  }
+  li { margin-bottom: 4px; }
+
+  .tip {
+    background: #eef4ff;
+    border-left: 4px solid #003087;
+    padding: 10px 14px;
+    border-radius: 4px;
+    margin: 14px 0;
+    font-size: 10.5pt;
+  }
+
+  .warn {
+    background: #fff8e6;
+    border-left: 4px solid #e6a000;
+    padding: 10px 14px;
+    border-radius: 4px;
+    margin: 14px 0;
+    font-size: 10.5pt;
+  }
+
+  code {
+    font-family: 'Courier New', monospace;
+    background: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10pt;
+  }
+
+  .step-box {
+    border: 1px solid #d0d8e8;
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    background: #fafbff;
+  }
+  .step-box ol { margin-top: 8px; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 10.5pt;
+  }
+  th {
+    background: #003087;
+    color: #fff;
+    text-align: left;
+    padding: 8px 12px;
+    font-weight: 600;
+  }
+  td {
+    padding: 7px 12px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  tr:nth-child(even) td { background: #f5f7fb; }
+
+  .footer {
+    margin-top: 60px;
+    text-align: center;
+    font-size: 8.5pt;
+    color: #888;
+    border-top: 1px solid #ddd;
+    padding-top: 14px;
+  }
+
+  @media print {
+    .cover { height: 100vh; }
+    h2 { page-break-after: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PORTADA -->
+<div class="cover">
+  <div class="logo-text">RELCO</div>
+  <div class="logo-sub">Systems LLC</div>
+  <h1>Manual de Usuario<br>Sistema de Publicidad Digital</h1>
+  <div class="subtitle">vlc-publicidad.ps1 — Pantalla secundaria en bucle</div>
+  <div class="version">Versión 1.0 &nbsp;·&nbsp; Abril 2026</div>
+</div>
+
+<!-- CONTENIDO -->
+<div class="content">
+
+  <h2>1. Descripción general</h2>
+  <p>
+    El sistema <strong>Publicidad RELCO</strong> reproduce automáticamente videos e imágenes
+    en pantalla completa sobre el monitor secundario al iniciar Windows. Está formado por
+    un único script de PowerShell (<code>vlc-publicidad.ps1</code>) que gestiona la
+    instalación, los accesos directos y el lanzamiento de VLC Media Player.
+  </p>
+
+  <h2>2. Requisitos previos</h2>
+  <ul>
+    <li>Windows 10 / 11</li>
+    <li><strong>VLC Media Player</strong> instalado (64 o 32 bits)</li>
+    <li>Monitor secundario conectado y reconocido por Windows</li>
+    <li>PowerShell 5.0 o superior (incluido en Windows 10/11)</li>
+  </ul>
+
+  <h2>3. Estructura de carpetas</h2>
+  <p>El script espera que los archivos de publicidad estén en:</p>
+  <p><code>C:\Users\Public\relco_videos\</code></p>
+  <p>
+    Si la carpeta no existe, el script la crea automáticamente en el primer
+    arranque e indica al operador que debe agregar contenido.
+  </p>
+
+  <h3>Formatos soportados</h3>
+  <table>
+    <tr><th>Extensión</th><th>Tipo</th><th>Notas</th></tr>
+    <tr><td><code>.mp4</code></td><td>Video</td><td>H.264 recomendado</td></tr>
+    <tr><td><code>.jpg</code> / <code>.jpeg</code></td><td>Imagen</td><td>Se muestra 10 seg. por defecto</td></tr>
+    <tr><td><code>.png</code></td><td>Imagen</td><td>Se muestra 10 seg. por defecto</td></tr>
+  </table>
+  <p>
+    Los archivos se ordenan <strong>alfabéticamente por nombre</strong>. Para controlar
+    el orden de reproducción, anteponga un prefijo numérico: <code>01_bienvenida.mp4</code>,
+    <code>02_oferta.jpg</code>, etc.
+  </p>
+
+  <h2>4. Instalación</h2>
+  <div class="step-box">
+    <strong>Pasos (única vez):</strong>
+    <ol>
+      <li>Copie <code>vlc-publicidad.ps1</code> a cualquier carpeta accesible.</li>
+      <li>Haga clic derecho sobre el archivo → <em>Ejecutar con PowerShell</em>.<br>
+          Si solicita permisos de ejecución, confirme con <em>Sí</em>.</li>
+      <li>También puede ejecutarlo desde PowerShell con el parámetro <code>-Setup</code>:<br>
+          <code>.\vlc-publicidad.ps1 -Setup</code></li>
+    </ol>
+  </div>
+  <p>Durante la instalación el script:</p>
+  <ul>
+    <li>Se copia a <code>C:\Users\Public\vlc-publicidad.ps1</code>.</li>
+    <li>Crea un acceso directo <strong>"Publicidad RELCO"</strong> en el <strong>Escritorio</strong>.</li>
+    <li>Crea un acceso directo en <strong>Inicio automático</strong> del usuario actual,
+        para que arranque con Windows.</li>
+    <li>Lanza VLC inmediatamente.</li>
+  </ul>
+
+  <h2>5. Acceso directo en el Escritorio</h2>
+  <p>
+    Tras la instalación aparece el icono <strong>"Publicidad RELCO"</strong> en el escritorio.
+    Úselo para:
+  </p>
+  <ul>
+    <li><strong>Relanzar la publicidad</strong> después de cerrarla manualmente.</li>
+    <li><strong>Aplicar cambios de playlist:</strong> cada vez que agregue, quite o
+        renombre archivos en <code>relco_videos\</code>, haga doble clic en este
+        acceso directo para que VLC cargue la nueva lista.</li>
+  </ul>
+  <div class="tip">
+    <strong>Tip:</strong> VLC no detecta cambios en la carpeta en tiempo real. Siempre
+    use el acceso directo del escritorio para reiniciar la reproducción con el contenido actualizado.
+  </div>
+
+  <h2>6. Icono en el área de notificaciones (reloj)</h2>
+  <p>
+    Cuando la publicidad está activa, VLC aparece como un pequeño <strong>icono de cono naranja</strong>
+    en el área de notificaciones (junto al reloj, esquina inferior derecha de la pantalla).
+  </p>
+  <ul>
+    <li><strong>Clic derecho → Salir</strong> — cierra VLC completamente.</li>
+    <li>Si el icono no es visible, haga clic en la flecha <em>"Mostrar iconos ocultos"</em>
+        (el símbolo <code>^</code> junto al reloj).</li>
+  </ul>
+  <div class="warn">
+    <strong>Nota:</strong> La ventana de VLC está oculta de la barra de tareas de forma
+    intencional para no interferir con el escritorio. El único punto de acceso para
+    cerrarlo es el icono del área de notificaciones o el Administrador de tareas.
+  </div>
+
+  <h2>7. Desactivar notificaciones de VLC</h2>
+  <p>
+    Para evitar que las alertas de VLC (actualizaciones, privacidad, etc.) interrumpan
+    la reproducción, desactívelas la primera vez que abra VLC normalmente:
+  </p>
+  <div class="step-box">
+    <ol>
+      <li>Abra VLC → menú <strong>Herramientas</strong> → <strong>Preferencias</strong>
+          <em>(Ctrl + P)</em>.</li>
+      <li>En la sección <strong>Interfaz</strong>, desmarque:<br>
+          <em>"Buscar actualizaciones al iniciar"</em></li>
+      <li>Haga clic en <strong>Guardar</strong>.</li>
+      <li>En el primer arranque de VLC, si aparece una ventana de política de privacidad,
+          elija <strong>"No permitir metadatos"</strong> y confirme.</li>
+    </ol>
+  </div>
+  <p>
+    Adicionalmente, desde la configuración de Windows puede silenciar las notificaciones
+    de VLC por completo:
+  </p>
+  <div class="step-box">
+    <ol>
+      <li>Abra <strong>Configuración</strong> → <strong>Sistema</strong> → <strong>Notificaciones y acciones</strong>.</li>
+      <li>Busque <strong>VLC media player</strong> en la lista y desactive el interruptor.</li>
+    </ol>
+  </div>
+
+  <h2>8. Actualizar el contenido de publicidad</h2>
+  <ol>
+    <li>Copie los nuevos archivos (<code>.mp4</code>, <code>.jpg</code>, <code>.png</code>)
+        a <code>C:\Users\Public\relco_videos\</code>.</li>
+    <li>Elimine o renombre los archivos que ya no deban reproducirse.</li>
+    <li>Cierre VLC desde el icono del área de notificaciones (clic derecho → Salir).</li>
+    <li>Haga doble clic en el acceso directo <strong>"Publicidad RELCO"</strong> del
+        escritorio para reiniciar con la nueva lista.</li>
+  </ol>
+
+  <h2>9. Parámetros configurables</h2>
+  <p>Los siguientes valores se pueden ajustar editando las primeras líneas del script:</p>
+  <table>
+    <tr><th>Variable</th><th>Valor por defecto</th><th>Descripción</th></tr>
+    <tr><td><code>$MediaFolder</code></td><td><code>Public\relco_videos</code></td><td>Carpeta de contenidos</td></tr>
+    <tr><td><code>$ImageDuration</code></td><td><code>10</code> (segundos)</td><td>Tiempo por imagen</td></tr>
+    <tr><td><code>$SecondaryScreen</code></td><td><code>1</code></td><td>0 = primaria · 1 = secundaria</td></tr>
+  </table>
+  <p>Tras cualquier cambio en el script, vuelva a ejecutarlo con <code>-Setup</code>
+  para reinstalar los accesos directos.</p>
+
+  <h2>10. Solución de problemas</h2>
+  <table>
+    <tr><th>Síntoma</th><th>Causa probable</th><th>Solución</th></tr>
+    <tr>
+      <td>VLC no arranca al encender el PC</td>
+      <td>Acceso directo de inicio automático no creado</td>
+      <td>Ejecutar el script con <code>-Setup</code></td>
+    </tr>
+    <tr>
+      <td>Pantalla negra / sin contenido</td>
+      <td>Carpeta <code>relco_videos</code> vacía</td>
+      <td>Agregar archivos y reiniciar con el acceso directo</td>
+    </tr>
+    <tr>
+      <td>El video sale en la pantalla incorrecta</td>
+      <td>Valor de <code>$SecondaryScreen</code></td>
+      <td>Cambiar a <code>0</code> o <code>1</code> según corresponda</td>
+    </tr>
+    <tr>
+      <td>Las imágenes se ven muy poco tiempo</td>
+      <td><code>$ImageDuration</code> bajo</td>
+      <td>Aumentar el valor en el script y relanzar</td>
+    </tr>
+    <tr>
+      <td>VLC aparece en la barra de tareas</td>
+      <td>Error al ocultar la ventana</td>
+      <td>Cerrar y relanzar desde el acceso directo</td>
+    </tr>
+    <tr>
+      <td>VLC no se encuentra</td>
+      <td>VLC no instalado o en ruta no estándar</td>
+      <td>Reinstalar VLC Media Player</td>
+    </tr>
+  </table>
+
+  <h2>11. Desinstalación</h2>
+  <ol>
+    <li>Cierre VLC desde el icono del área de notificaciones.</li>
+    <li>Elimine el acceso directo del <strong>Escritorio</strong>: <code>Publicidad RELCO.lnk</code></li>
+    <li>Elimine el acceso directo de inicio automático en:<br>
+        <code>C:\Users\&lt;usuario&gt;\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\</code></li>
+    <li>Elimine <code>C:\Users\Public\vlc-publicidad.ps1</code> si lo desea.</li>
+  </ol>
+
+  <div class="footer">
+    Publicidad RELCO &nbsp;·&nbsp; RELCO Systems LLC &nbsp;·&nbsp; Abril 2026<br>
+    Para soporte técnico contacte a su administrador de sistemas.
+  </div>
+
+</div>
+</body>
+</html>
