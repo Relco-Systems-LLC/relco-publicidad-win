@@ -176,6 +176,11 @@
 <!-- CONTENIDO -->
 <div class="content">
 
+  <div class="tip" style="margin-top:0; margin-bottom: 28px; font-size:10pt;">
+    Descargue la última versión del script en:<br>
+    <strong>github.com/Relco-Systems-LLC/relco-publicidad-win</strong>
+  </div>
+
   <h2>1. Descripción general</h2>
   <p>
     El sistema <strong>Publicidad RELCO</strong> reproduce automáticamente videos e imágenes
@@ -184,15 +189,33 @@
     instalación, los accesos directos y el lanzamiento de VLC Media Player.
   </p>
 
-  <h2>2. Requisitos previos</h2>
+  <h2>2. Configuración del escritorio: modo Extender</h2>
+  <p>
+    Para que la publicidad aparezca en el monitor secundario sin afectar el escritorio
+    principal, Windows debe estar configurado en modo <strong>Extender</strong>.
+  </p>
+  <div class="step-box">
+    <ol>
+      <li>Presione <strong>Windows + P</strong>.</li>
+      <li>En el panel que aparece a la derecha seleccione <strong>Extender</strong>.</li>
+    </ol>
+  </div>
+  <div class="warn">
+    <strong>Importante:</strong> Si el escritorio está en modo <em>Duplicar</em> o
+    <em>Solo segunda pantalla</em>, VLC no se mostrará en el monitor correcto.
+    El modo <strong>Extender</strong> es requisito indispensable para el funcionamiento
+    del sistema.
+  </div>
+
+  <h2>3. Requisitos previos</h2>
   <ul>
     <li>Windows 10 / 11</li>
     <li><strong>VLC Media Player</strong> instalado (64 o 32 bits)</li>
-    <li>Monitor secundario conectado y reconocido por Windows</li>
+    <li>Monitor secundario conectado y reconocido por Windows en modo <strong>Extender</strong></li>
     <li>PowerShell 5.0 o superior (incluido en Windows 10/11)</li>
   </ul>
 
-  <h2>3. Estructura de carpetas</h2>
+  <h2>4. Estructura de carpetas</h2>
   <p>El script espera que los archivos de publicidad estén en:</p>
   <p><code>C:\Users\Public\relco_videos\</code></p>
   <p>
@@ -213,7 +236,7 @@
     <code>02_oferta.jpg</code>, etc.
   </p>
 
-  <h2>4. Instalación</h2>
+  <h2>5. Instalación</h2>
   <div class="step-box">
     <strong>Pasos (única vez):</strong>
     <ol>
@@ -238,7 +261,7 @@
     <li>Lanza VLC inmediatamente.</li>
   </ul>
 
-  <h2>5. Acceso directo en el Escritorio</h2>
+  <h2>6. Acceso directo en el Escritorio</h2>
   <p>
     Tras la instalación aparece el icono <strong>"Publicidad RELCO"</strong> en el escritorio.
     Úselo para:
@@ -254,7 +277,7 @@
     use el acceso directo del escritorio para reiniciar la reproducción con el contenido actualizado.
   </div>
 
-  <h2>6. Icono en el área de notificaciones (reloj)</h2>
+  <h2>7. Icono en el área de notificaciones (reloj)</h2>
   <p>
     Cuando la publicidad está activa, VLC aparece como un pequeño <strong>icono de cono naranja</strong>
     en el área de notificaciones (junto al reloj, esquina inferior derecha de la pantalla).
@@ -270,7 +293,7 @@
     cerrarlo es el icono del área de notificaciones o el Administrador de tareas.
   </div>
 
-  <h2>7. Desactivar notificaciones de Windows para VLC</h2>
+  <h2>8. Desactivar notificaciones de Windows para VLC</h2>
   <p>
     Windows puede mostrar notificaciones grises (globos o banners) generadas por VLC
     que interrumpen la pantalla de publicidad. Para desactivarlas:
@@ -290,7 +313,7 @@
     remitentes"</em> en la misma pantalla.
   </div>
 
-  <h2>8. Actualizar el contenido de publicidad</h2>
+  <h2>9. Actualizar el contenido de publicidad</h2>
   <ol>
     <li>Copie los nuevos archivos (<code>.mp4</code>, <code>.jpg</code>, <code>.png</code>)
         a <code>C:\Users\Public\relco_videos\</code>.</li>
@@ -300,7 +323,7 @@
         escritorio para reiniciar con la nueva lista.</li>
   </ol>
 
-  <h2>9. Parámetros configurables</h2>
+  <h2>10. Parámetros configurables</h2>
   <p>Los siguientes valores se pueden ajustar editando las primeras líneas del script:</p>
   <table>
     <tr><th>Variable</th><th>Valor por defecto</th><th>Descripción</th></tr>
@@ -311,7 +334,7 @@
   <p>Tras cualquier cambio en el script, vuelva a ejecutarlo con <code>-Setup</code>
   para reinstalar los accesos directos.</p>
 
-  <h2>10. Solución de problemas</h2>
+  <h2>11. Solución de problemas</h2>
   <table>
     <tr><th>Síntoma</th><th>Causa probable</th><th>Solución</th></tr>
     <tr>
@@ -346,7 +369,7 @@
     </tr>
   </table>
 
-  <h2>11. Desinstalación</h2>
+  <h2>12. Desinstalación</h2>
   <ol>
     <li>Cierre VLC desde el icono del área de notificaciones.</li>
     <li>Elimine el acceso directo del <strong>Escritorio</strong>: <code>Publicidad RELCO.lnk</code></li>
