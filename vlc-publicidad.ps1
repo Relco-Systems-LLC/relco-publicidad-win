@@ -25,7 +25,11 @@ $VlcCandidates = @(
 )
 $VlcExe = $VlcCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
 if (-not $VlcExe) {
-    [System.Windows.Forms.MessageBox]::Show("VLC no encontrado. Instale VLC Media Player.", "Error") | Out-Null
+    Start-Process "https://www.videolan.org/vlc/"
+    [System.Windows.Forms.MessageBox]::Show(
+        "VLC no encontrado. Se abrio la pagina de descarga en el navegador.`nInstale VLC y vuelva a ejecutar el script.",
+        "VLC requerido"
+    ) | Out-Null
     exit 1
 }
 
@@ -73,6 +77,11 @@ if ($Setup) {
     $sc.Description      = "Inicia publicidad en VLC"
     $sc.Save()
     Write-Host "Acceso directo escritorio: $DesktopLnk"
+
+    # Configurar modo Extender automaticamente
+    Write-Host "Configurando modo Extender en pantallas..."
+    Start-Process -FilePath "DisplaySwitch.exe" -ArgumentList "/extend" -Wait
+    Start-Sleep -Milliseconds 1500   # dar tiempo a Windows para aplicar el cambio
 
     Write-Host ""
     Write-Host "Listo. Lanzando VLC ahora..."

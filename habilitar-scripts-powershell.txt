@@ -1,0 +1,13 @@
+Habilitar ejecución de scripts en PowerShell
+=============================================
+
+Opción A — Solo para el usuario actual (no requiere administrador):
+  Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+Opción B — Para todos los usuarios (requiere abrir PowerShell como Administrador):
+  Set-ExecutionPolicy RemoteSigned
+
+Confirmá con "S" (Sí) cuando PowerShell lo solicite.
+
+Para verificar que quedó aplicado:
+  Get-ExecutionPolicy -List
