@@ -5,7 +5,7 @@
     Primera vez: ejecutar con -Setup para crear los accesos directos.
 
 .EXAMPLE
-    .\vlc-publicidad.ps1 -Setup    # Crea accesos directos y lanza VLC
+    .\vlc-publicidad.ps1 -Setup    # Instala accesos directos y configura pantalla
     .\vlc-publicidad.ps1            # Solo lanza VLC (lo usan los accesos directos)
 #>
 param(
@@ -24,16 +24,8 @@ $VlcCandidates = @(
     "${env:ProgramFiles(x86)}\VideoLAN\VLC\vlc.exe"
 )
 $VlcExe = $VlcCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
-if (-not $VlcExe) {
-    Start-Process "https://www.videolan.org/vlc/"
-    [System.Windows.Forms.MessageBox]::Show(
-        "VLC no encontrado. Se abrio la pagina de descarga en el navegador.`nInstale VLC y vuelva a ejecutar el script.",
-        "VLC requerido"
-    ) | Out-Null
-    exit 1
-}
 
-# ── Crear accesos directos (modo -Setup) ───────────────────────────────────────
+# ── Instalacion (modo -Setup) ───────────────────────────────────────────────────
 if ($Setup) {
     $ScriptPath = $MyInvocation.MyCommand.Path
     if (-not $ScriptPath) {
@@ -48,6 +40,16 @@ if ($Setup) {
         Write-Host "Script instalado en: $InstallPath"
     }
     $ScriptPath = $InstallPath
+
+    # Verificar VLC
+    if (-not $VlcExe) {
+        Start-Process "https://www.videolan.org/vlc/"
+        [System.Windows.Forms.MessageBox]::Show(
+            "VLC no encontrado. Se abrio la pagina de descarga en el navegador.`nInstale VLC y vuelva a ejecutar -Setup.",
+            "VLC requerido"
+        ) | Out-Null
+        exit 1
+    }
 
     $PsExe  = Join-Path $PSHOME "powershell.exe"
     $PsArgs = "-WindowStyle Hidden -ExecutionPolicy Bypass -NonInteractive -File `"$ScriptPath`""
@@ -78,13 +80,25 @@ if ($Setup) {
     $sc.Save()
     Write-Host "Acceso directo escritorio: $DesktopLnk"
 
-    # Configurar modo Extender automaticamente
-    Write-Host "Configurando modo Extender en pantallas..."
-    Start-Process -FilePath "DisplaySwitch.exe" -ArgumentList "/extend" -Wait
-    Start-Sleep -Milliseconds 1500   # dar tiempo a Windows para aplicar el cambio
+    # Abrir panel de seleccion de pantalla (equivale a Win+P)
+    # El usuario debe seleccionar "Extender" en el panel que aparece
+    Write-Host "Abriendo panel de seleccion de pantalla (seleccione Extender)..."
+    Start-Process -FilePath "DisplaySwitch.exe" -ArgumentList "/extend"
+    Start-Sleep -Milliseconds 1500
 
     Write-Host ""
-    Write-Host "Listo. Lanzando VLC ahora..."
+    Write-Host "Instalacion completada. Use el acceso directo del escritorio para iniciar la publicidad."
+    exit 0
+}
+
+# ── Verificar VLC (modo normal) ────────────────────────────────────────────────
+if (-not $VlcExe) {
+    Start-Process "https://www.videolan.org/vlc/"
+    [System.Windows.Forms.MessageBox]::Show(
+        "VLC no encontrado. Se abrio la pagina de descarga en el navegador.`nInstale VLC y vuelva a ejecutar el script.",
+        "VLC requerido"
+    ) | Out-Null
+    exit 1
 }
 
 # ── Buscar archivos multimedia ─────────────────────────────────────────────────
