@@ -134,7 +134,9 @@ $VlcArgs = @(
     "--no-lua"
 ) + ($MediaFiles | ForEach-Object { "`"$($_.FullName)`"" })
 
-$LogFile = "$env:PUBLIC\vlc-publicidad.log"
+$LogDir  = "$env:TEMP\relco_publicidad\$(Get-Date -Format 'yyyy-MM-dd')"
+New-Item -ItemType Directory -Path $LogDir -Force | Out-Null
+$LogFile = "$LogDir\vlc-publicidad.log"
 function Log($msg) {
     $line = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss.fff')  $msg"
     Add-Content -Path $LogFile -Value $line
