@@ -129,24 +129,14 @@ $VlcArgs = @(
     "--no-video-title-show"
     "--no-osd"
     "--image-duration=$ImageDuration"
+    "--no-qt-updates-notif"
+    "--no-qt-privacy-ask"
+    "--no-lua"
 ) + ($MediaFiles | ForEach-Object { "`"$($_.FullName)`"" })
 
 Write-Host "VLC: $VlcExe"
 Write-Host "Args: $($VlcArgs -join ' ')"
-$Proc = Start-Process -FilePath $VlcExe -ArgumentList $VlcArgs -PassThru
-
-# Esperar a que VLC cree su ventana (maximo 15 segundos)
-$Deadline = (Get-Date).AddSeconds(15)
-do {
-    Start-Sleep -Milliseconds 500
-    $Proc.Refresh()
-} until ($Proc.MainWindowHandle -ne 0 -or (Get-Date) -gt $Deadline)
-
-# ── Ocultar icono de la barra de tareas ────────────────────────────────────────
-# Se aplica WS_EX_TOOLWINDOW (ventana de herramienta, invisible en taskbar)
-# y se quita WS_EX_APPWINDOW (que fuerza aparicion en taskbar).
-if ($Proc.MainWindowHandle -ne 0) {
-    Add-Type -TypeDefinition @'
+Add-Type -TypeDefinition @'
 using System;
 using System.Runtime.InteropServices;
 
@@ -176,5 +166,15 @@ public static class TaskbarHider {
 }
 '@ -ErrorAction SilentlyContinue
 
+$Proc = Start-Process -FilePath $VlcExe -ArgumentList $VlcArgs -PassThru
+
+# Esperar a que VLC cree su ventana (6 intentos cada 10 segundos)
+for ($i = 0; $i -lt 6; $i++) {
+    Start-Sleep -Seconds 10
+    $Proc.Refresh()
+    if ($Proc.MainWindowHandle -ne 0) { break }
+}
+
+if ($Proc.MainWindowHandle -ne 0) {
     [TaskbarHider]::Hide($Proc.Id)
 }
