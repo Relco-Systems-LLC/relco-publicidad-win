@@ -1,0 +1,200 @@
+#Requires -Version 5.0
+<#
+.SYNOPSIS
+    Lanza mpv en bucle y pantalla completa en la pantalla secundaria.
+    Primera vez: ejecutar con -Setup para crear los accesos directos.
+
+.EXAMPLE
+    .\mpv-publicidad.ps1 -Setup    # Instala accesos directos y configura pantalla
+    .\mpv-publicidad.ps1            # Solo lanza mpv (lo usan los accesos directos)
+#>
+param(
+    [switch]$Setup
+)
+
+# ── Configuracion ──────────────────────────────────────────────────────────────
+$MediaFolder     = "$env:PUBLIC\relco_videos"
+$ImageDuration   = 10       # segundos que se muestra cada imagen (jpg/png)
+$SecondaryScreen = 1        # 0 = pantalla primaria, 1 = secundaria
+$ShortcutName    = "Publicidad RELCO"
+
+# ── Localizar mpv ──────────────────────────────────────────────────────────────
+$MpvCandidates = @(
+    "${env:ProgramFiles}\mpv\mpv.exe",
+    "${env:ProgramFiles(x86)}\mpv\mpv.exe",
+    "$env:PUBLIC\mpv\mpv.exe"
+)
+$MpvExe = $MpvCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+
+# ── Instalacion (modo -Setup) ───────────────────────────────────────────────────
+if ($Setup) {
+    $ScriptPath = $MyInvocation.MyCommand.Path
+    if (-not $ScriptPath) {
+        Write-Error "Ejecute el script desde un archivo .ps1 guardado en disco, no pegado en consola."
+        exit 1
+    }
+
+    # Auto-instalar el script en C:\Users\Public si no esta ya ahi
+    $InstallPath = "$env:PUBLIC\mpv-publicidad.ps1"
+    if ((Resolve-Path $ScriptPath).Path -ne (Resolve-Path $InstallPath -ErrorAction SilentlyContinue).Path) {
+        Copy-Item -Path $ScriptPath -Destination $InstallPath -Force
+        Write-Host "Script instalado en: $InstallPath"
+    }
+    $ScriptPath = $InstallPath
+
+    # Verificar mpv
+    if (-not $MpvExe) {
+        [System.Windows.Forms.MessageBox]::Show(
+            "mpv no encontrado.`n`nDescargue mpv desde https://mpv.io/installation/`ny descomprima en C:\Program Files\mpv\`nLuego vuelva a ejecutar -Setup.",
+            "mpv requerido"
+        ) | Out-Null
+        exit 1
+    }
+
+    $PsExe  = Join-Path $PSHOME "powershell.exe"
+    $PsArgs = "-WindowStyle Hidden -ExecutionPolicy Bypass -NonInteractive -File `"$ScriptPath`""
+    $WorkDir = $env:PUBLIC
+
+    $Wsh = New-Object -ComObject WScript.Shell
+
+    # Acceso directo en Inicio automatico (solo usuario actual, sin necesidad de admin)
+    $StartupDir = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup"
+    $StartupLnk = Join-Path $StartupDir "$ShortcutName.lnk"
+    $sc = $Wsh.CreateShortcut($StartupLnk)
+    $sc.TargetPath       = $PsExe
+    $sc.Arguments        = $PsArgs
+    $sc.WorkingDirectory = $WorkDir
+    $sc.IconLocation     = "$MpvExe,0"
+    $sc.Description      = "Inicia publicidad en mpv al arrancar Windows"
+    $sc.Save()
+    Write-Host "Acceso directo inicio automatico: $StartupLnk"
+
+    # Acceso directo en Escritorio
+    $DesktopLnk = Join-Path ([Environment]::GetFolderPath('Desktop')) "$ShortcutName.lnk"
+    $sc = $Wsh.CreateShortcut($DesktopLnk)
+    $sc.TargetPath       = $PsExe
+    $sc.Arguments        = $PsArgs
+    $sc.WorkingDirectory = $WorkDir
+    $sc.IconLocation     = "$MpvExe,0"
+    $sc.Description      = "Inicia publicidad en mpv"
+    $sc.Save()
+    Write-Host "Acceso directo escritorio: $DesktopLnk"
+
+    # Abrir panel de seleccion de pantalla (equivale a Win+P)
+    Write-Host "Abriendo panel de seleccion de pantalla (seleccione Extender)..."
+    Start-Process -FilePath "DisplaySwitch.exe" -ArgumentList "/extend"
+    Start-Sleep -Milliseconds 1500
+
+    # Crear carpeta de videos si no existe
+    if (-not (Test-Path $MediaFolder)) {
+        New-Item -ItemType Directory -Path $MediaFolder -Force | Out-Null
+        Write-Host "Carpeta de videos creada: $MediaFolder"
+    }
+
+    Write-Host ""
+    Write-Host "Instalacion completada. Coloca los videos/imagenes en: $MediaFolder"
+    Write-Host "Luego usa el acceso directo del escritorio para iniciar la publicidad."
+    exit 0
+}
+
+# ── Verificar mpv (modo normal) ────────────────────────────────────────────────
+if (-not $MpvExe) {
+    [System.Windows.Forms.MessageBox]::Show(
+        "mpv no encontrado.`n`nDescargue mpv desde https://mpv.io/installation/`ny descomprima en C:\Program Files\mpv\`nLuego vuelva a ejecutar el script.",
+        "mpv requerido"
+    ) | Out-Null
+    exit 1
+}
+
+# ── Buscar archivos multimedia ─────────────────────────────────────────────────
+if (-not (Test-Path $MediaFolder)) {
+    New-Item -ItemType Directory -Path $MediaFolder -Force | Out-Null
+    Write-Host "Carpeta creada: $MediaFolder"
+    Write-Host "Coloca archivos .mp4 / .jpg / .png en esa carpeta y vuelve a ejecutar."
+    exit 0
+}
+
+$MediaFiles = Get-ChildItem -Path $MediaFolder -File |
+    Where-Object { $_.Extension -imatch '\.(mp4|jpg|jpeg|png)$' } |
+    Sort-Object Name
+
+if ($MediaFiles.Count -eq 0) {
+    Write-Host "No se encontraron archivos mp4/jpg/png en: $MediaFolder"
+    exit 0
+}
+
+Write-Host "Archivos encontrados ($($MediaFiles.Count)):"
+$MediaFiles | ForEach-Object { Write-Host "  $($_.Name)" }
+
+# ── Log ────────────────────────────────────────────────────────────────────────
+New-Item -ItemType Directory -Path "$env:TEMP\relco_publicidad" -Force | Out-Null
+$LogFile = "$env:TEMP\relco_publicidad\$(Get-Date -Format 'yyyy-MM-dd').log"
+function Log($msg) {
+    $line = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss.fff')  $msg"
+    Add-Content -Path $LogFile -Value $line
+}
+
+Log "=== inicio ==="
+Log "mpv: $MpvExe"
+Log "Archivos: $($MediaFiles.Count) -> $($MediaFiles.Name -join ', ')"
+
+# ── Lanzar mpv ─────────────────────────────────────────────────────────────────
+$MpvArgs = @(
+    "--loop-playlist=inf"
+    "--fs"
+    "--fs-screen=$SecondaryScreen"
+    "--image-display-duration=$ImageDuration"
+    "--no-osd-bar"
+    "--no-terminal"
+) + ($MediaFiles | ForEach-Object { "`"$($_.FullName)`"" })
+
+Add-Type -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+
+public static class TaskbarHider {
+    [DllImport("user32.dll")] static extern bool EnumWindows(EnumWndProc f, IntPtr l);
+    [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr h, out uint pid);
+    [DllImport("user32.dll")] static extern bool IsWindowVisible(IntPtr h);
+    [DllImport("user32.dll")] static extern int  GetWindowLong(IntPtr h, int idx);
+    [DllImport("user32.dll")] static extern int  SetWindowLong(IntPtr h, int idx, int val);
+
+    delegate bool EnumWndProc(IntPtr h, IntPtr l);
+    const int GWL_EXSTYLE      = -20;
+    const int WS_EX_TOOLWINDOW = 0x00000080;
+    const int WS_EX_APPWINDOW  = 0x00040000;
+
+    public static void Hide(int processId) {
+        EnumWindows((h, l) => {
+            uint pid;
+            GetWindowThreadProcessId(h, out pid);
+            if ((int)pid == processId && IsWindowVisible(h)) {
+                int ex = GetWindowLong(h, GWL_EXSTYLE);
+                SetWindowLong(h, GWL_EXSTYLE, (ex | WS_EX_TOOLWINDOW) & ~WS_EX_APPWINDOW);
+            }
+            return true;
+        }, IntPtr.Zero);
+    }
+}
+'@ -ErrorAction SilentlyContinue
+
+Log "Add-Type compilado"
+$Proc = Start-Process -FilePath $MpvExe -ArgumentList $MpvArgs -PassThru
+Log "mpv lanzado PID=$($Proc.Id)"
+
+# Esperar a que mpv cree su ventana (45 intentos cada 1 segundo = 45 segundos maximo)
+for ($i = 0; $i -lt 45; $i++) {
+    Start-Sleep -Seconds 1
+    $Proc.Refresh()
+    if ($Proc.MainWindowHandle -ne 0) {
+        Log "Ventana detectada en intento $($i+1) (+$($i+1)s)"
+        break
+    }
+}
+
+if ($Proc.MainWindowHandle -ne 0) {
+    [TaskbarHider]::Hide($Proc.Id)
+    Log "Taskbar oculto OK"
+} else {
+    Log "TIMEOUT: ventana no detectada en 45s"
+}
