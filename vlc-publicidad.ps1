@@ -134,8 +134,16 @@ $VlcArgs = @(
     "--no-lua"
 ) + ($MediaFiles | ForEach-Object { "`"$($_.FullName)`"" })
 
-Write-Host "VLC: $VlcExe"
-Write-Host "Args: $($VlcArgs -join ' ')"
+$LogFile = "$env:PUBLIC\vlc-publicidad.log"
+function Log($msg) {
+    $line = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss.fff')  $msg"
+    Add-Content -Path $LogFile -Value $line
+}
+
+Log "=== inicio ==="
+Log "VLC: $VlcExe"
+Log "Archivos: $($MediaFiles.Count) -> $($MediaFiles.Name -join ', ')"
+
 Add-Type -TypeDefinition @'
 using System;
 using System.Runtime.InteropServices;
@@ -166,15 +174,23 @@ public static class TaskbarHider {
 }
 '@ -ErrorAction SilentlyContinue
 
+Log "Add-Type compilado"
 $Proc = Start-Process -FilePath $VlcExe -ArgumentList $VlcArgs -PassThru
+Log "VLC lanzado PID=$($Proc.Id)"
 
 # Esperar a que VLC cree su ventana (50 intentos cada 0.5 segundos = 25 segundos maximo)
 for ($i = 0; $i -lt 50; $i++) {
     Start-Sleep -Milliseconds 500
     $Proc.Refresh()
-    if ($Proc.MainWindowHandle -ne 0) { break }
+    if ($Proc.MainWindowHandle -ne 0) {
+        Log "Ventana detectada en intento $($i+1) (+$([math]::Round(($i+1)*0.5,1))s)"
+        break
+    }
 }
 
 if ($Proc.MainWindowHandle -ne 0) {
     [TaskbarHider]::Hide($Proc.Id)
+    Log "Taskbar oculto OK"
+} else {
+    Log "TIMEOUT: ventana no detectada en 25s"
 }
