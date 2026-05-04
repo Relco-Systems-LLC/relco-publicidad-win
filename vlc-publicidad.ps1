@@ -168,9 +168,9 @@ public static class TaskbarHider {
 
 $Proc = Start-Process -FilePath $VlcExe -ArgumentList $VlcArgs -PassThru
 
-# Esperar a que VLC cree su ventana (6 intentos cada 10 segundos)
-for ($i = 0; $i -lt 6; $i++) {
-    Start-Sleep -Seconds 10
+# Esperar a que VLC cree su ventana (50 intentos cada 0.5 segundos = 25 segundos maximo)
+for ($i = 0; $i -lt 50; $i++) {
+    Start-Sleep -Milliseconds 500
     $Proc.Refresh()
     if ($Proc.MainWindowHandle -ne 0) { break }
 }
