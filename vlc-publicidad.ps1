@@ -179,12 +179,12 @@ Log "Add-Type compilado"
 $Proc = Start-Process -FilePath $VlcExe -ArgumentList $VlcArgs -PassThru
 Log "VLC lanzado PID=$($Proc.Id)"
 
-# Esperar a que VLC cree su ventana (50 intentos cada 0.5 segundos = 25 segundos maximo)
-for ($i = 0; $i -lt 50; $i++) {
-    Start-Sleep -Milliseconds 500
+# Esperar a que VLC cree su ventana (45 intentos cada 1 segundo = 45 segundos maximo)
+for ($i = 0; $i -lt 45; $i++) {
+    Start-Sleep -Seconds 1
     $Proc.Refresh()
     if ($Proc.MainWindowHandle -ne 0) {
-        Log "Ventana detectada en intento $($i+1) (+$([math]::Round(($i+1)*0.5,1))s)"
+        Log "Ventana detectada en intento $($i+1) (+$($i+1)s)"
         break
     }
 }
