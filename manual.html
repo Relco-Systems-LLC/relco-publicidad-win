@@ -183,8 +183,8 @@
   <div class="logo-text">RELCO</div>
   <div class="logo-sub">Systems LLC</div>
   <h1>Manual de Usuario<br>Sistema de Publicidad Digital</h1>
-  <div class="subtitle">vlc-publicidad.ps1 — Pantalla secundaria en bucle</div>
-  <div class="version">Versión 1.0 &nbsp;·&nbsp; Abril 2026</div>
+  <div class="subtitle">mpv-publicidad.ps1 — Pantalla secundaria en bucle</div>
+  <div class="version">Versión 1.1 &nbsp;·&nbsp; Noviembre 2026</div>
 </div>
 
 <!-- CONTENIDO -->
@@ -199,14 +199,15 @@
   <p>
     El sistema <strong>Publicidad RELCO</strong> reproduce automáticamente videos e imágenes
     en pantalla completa sobre el monitor secundario al iniciar Windows. Está formado por
-    un único script de PowerShell (<code>vlc-publicidad.ps1</code>) que gestiona la
-    instalación, los accesos directos y el lanzamiento de VLC Media Player.
+    un único script de PowerShell (<code>mpv-publicidad.ps1</code>) que gestiona la
+    instalación, los accesos directos y el lanzamiento del reproductor <strong>mpv</strong>,
+    un reproductor liviano de arranque instantáneo.
   </p>
 
   <h2>2. Requisitos previos</h2>
   <ul>
     <li>Windows 10 / 11</li>
-    <li><strong>VLC Media Player</strong> instalado (64 o 32 bits)</li>
+    <li><strong>mpv</strong> descomprimido en <code>C:\Program Files\mpv\</code> (ver sección 5)</li>
     <li>Monitor secundario conectado y reconocido por Windows en modo <strong>Extender</strong> (puede aparecer como <strong>Ampliar</strong> según la versión de Windows)</li>
     <li>PowerShell 5.0 o superior (incluido en Windows 10/11)</li>
   </ul>
@@ -215,8 +216,8 @@
   <p>El script espera que los archivos de publicidad estén en:</p>
   <p><code>C:\Users\Public\relco_videos\</code></p>
   <p>
-    Si la carpeta no existe, el script la crea automáticamente en el primer
-    arranque e indica al operador que debe agregar contenido.
+    Si la carpeta no existe, el script la crea automáticamente durante la instalación
+    e indica al operador que debe agregar contenido.
   </p>
 
   <h3>Formatos soportados</h3>
@@ -254,34 +255,43 @@
   <div class="step-box">
     <strong>Pasos (única vez):</strong>
     <ol>
-      <li><strong>Instale VLC Media Player</strong> antes de continuar. El script lo
-          busca en el sistema al ejecutarse; si no lo encuentra, la instalación falla.<br>
-          Descarga: <strong>videolan.org/vlc</strong></li>
-      <li>Copie <code>vlc-publicidad.ps1</code> a cualquier carpeta accesible.</li>
+      <li><strong>Instale mpv</strong> antes de continuar. mpv no tiene instalador: se descarga
+          un archivo comprimido y se descomprime a mano.<br>
+          Descarga: <strong>mpv.io/installation</strong> → sección <em>Windows</em> → compilación de 64 bits.<br>
+          Descomprima el contenido de modo que quede el archivo
+          <code>C:\Program Files\mpv\mpv.exe</code>.</li>
+      <li>Copie <code>mpv-publicidad.ps1</code> a cualquier carpeta accesible.</li>
       <li>Abra <strong>PowerShell</strong> y navegue hasta esa carpeta:<br>
           <code>cd C:\ruta\donde\guardó\el\script</code></li>
       <li>Ejecute el script con el parámetro <code>-Setup</code>:<br>
-          <code>.\vlc-publicidad.ps1 -Setup</code></li>
+          <code>.\mpv-publicidad.ps1 -Setup</code></li>
     </ol>
+  </div>
+  <div class="tip">
+    <strong>Sin permisos de Administrador:</strong> si no puede escribir en
+    <code>C:\Program Files\</code>, descomprima mpv en <code>C:\Users\Public\mpv\</code>
+    (debe quedar <code>C:\Users\Public\mpv\mpv.exe</code>). El script también lo busca ahí
+    y en <code>C:\Program Files (x86)\mpv\</code>.
   </div>
   <div class="warn">
     <strong>Importante:</strong> El script <em>solo se instala</em> cuando se ejecuta con
-    <code>-Setup</code> desde PowerShell. Sin ese parámetro únicamente lanza VLC
+    <code>-Setup</code> desde PowerShell. Sin ese parámetro únicamente lanza mpv
     (es el modo que usan los accesos directos ya instalados).
   </div>
   <p>Durante la instalación el script:</p>
   <ul>
-    <li>Verifica que VLC esté instalado (abre la página de descarga si no lo encuentra).</li>
-    <li>Se copia a <code>C:\Users\Public\vlc-publicidad.ps1</code>.</li>
+    <li>Verifica que mpv esté presente (muestra un cartel con la ruta esperada si no lo encuentra).</li>
+    <li>Se copia a <code>C:\Users\Public\mpv-publicidad.ps1</code>.</li>
     <li>Crea un acceso directo <strong>"Publicidad RELCO"</strong> en el <strong>Escritorio</strong>.</li>
     <li>Crea un acceso directo en <strong>Inicio automático</strong> del usuario actual,
         para que arranque con Windows.</li>
     <li>Abre el panel de selección de pantalla (igual que presionar <strong>Win + P</strong>):
         seleccione <strong>Extender</strong> (o <strong>Ampliar</strong>) para activar el monitor secundario.</li>
+    <li>Crea la carpeta <code>C:\Users\Public\relco_videos\</code> si no existe.</li>
   </ul>
   <div class="tip">
-    <strong>Nota:</strong> Una vez completada la instalación, use el acceso directo del
-    escritorio para iniciar la publicidad.
+    <strong>Nota:</strong> Una vez completada la instalación, copie el contenido a
+    <code>relco_videos\</code> y use el acceso directo del escritorio para iniciar la publicidad.
   </div>
   <div class="warn">
     <strong>Pantalla táctil:</strong> Al cambiar al modo Extender/Ampliar, Windows puede
@@ -303,61 +313,52 @@
   <ul>
     <li><strong>Relanzar la publicidad</strong> después de cerrarla manualmente.</li>
     <li><strong>Aplicar cambios de playlist:</strong> cada vez que agregue, quite o
-        renombre archivos en <code>relco_videos\</code>, haga doble clic en este
-        acceso directo para que VLC cargue la nueva lista.</li>
+        renombre archivos en <code>relco_videos\</code>, cierre la publicidad (sección 7) y
+        haga doble clic en este acceso directo para que mpv cargue la nueva lista.</li>
   </ul>
   <div class="tip">
-    <strong>Tip:</strong> VLC no detecta cambios en la carpeta en tiempo real. Siempre
-    use el acceso directo del escritorio para reiniciar la reproducción con el contenido actualizado.
+    <strong>Tip:</strong> mpv no detecta cambios en la carpeta en tiempo real. Siempre
+    cierre y relance desde el acceso directo del escritorio para reproducir el contenido actualizado.
   </div>
 
-  <h2>7. Icono en el área de notificaciones (reloj)</h2>
+  <h2>7. Cómo cerrar la publicidad</h2>
   <p>
-    Cuando la publicidad está activa, VLC aparece como un pequeño <strong>icono de cono naranja</strong>
-    en el área de notificaciones (junto al reloj, esquina inferior derecha de la pantalla).
-  </p>
-  <ul>
-    <li><strong>Clic derecho → Salir</strong> — cierra VLC completamente.</li>
-    <li>Si el icono no es visible, haga clic en la flecha <em>"Mostrar iconos ocultos"</em>
-        (el símbolo <code>^</code> junto al reloj).</li>
-  </ul>
-  <div class="warn">
-    <strong>Nota:</strong> La ventana de VLC está oculta de la barra de tareas de forma
-    intencional para no interferir con el escritorio. El único punto de acceso para
-    cerrarlo es el icono del área de notificaciones o el Administrador de tareas.
-  </div>
-
-  <h2>8. Desactivar notificaciones de Windows para VLC</h2>
-  <p>
-    Windows puede mostrar notificaciones grises (globos o banners) generadas por VLC
-    que interrumpen la pantalla de publicidad. Para desactivarlas:
+    Mientras la publicidad está activa, mpv ocupa toda la pantalla secundaria. La ventana
+    está <strong>oculta de la barra de tareas</strong> de forma intencional para no interferir
+    con el escritorio, y mpv <strong>no muestra ningún icono</strong> junto al reloj.
+    Para cerrarla, elija cualquiera de estas opciones:
   </p>
   <div class="step-box">
+    <strong>Opción A — Con el teclado (recomendada):</strong>
     <ol>
-      <li>Abra <strong>Configuración de Windows</strong>
-          (<em>tecla Windows + I</em>).</li>
-      <li>Vaya a <strong>Sistema</strong> → <strong>Notificaciones y acciones</strong>.</li>
-      <li>En la lista de aplicaciones busque <strong>VLC media player</strong>
-          y desactive el interruptor.</li>
+      <li>Haga <strong>un clic</strong> sobre la pantalla de publicidad para darle el foco.</li>
+      <li>Presione la tecla <strong>Q</strong>. mpv se cierra de inmediato.
+          También funciona <strong>Alt + F4</strong>.</li>
+    </ol>
+    <strong>Opción B — Administrador de tareas:</strong>
+    <ol>
+      <li>Presione <strong>Ctrl + Shift + Esc</strong>.</li>
+      <li>Busque <strong>mpv</strong> (o <code>mpv.exe</code>) en la lista de procesos.</li>
+      <li>Haga clic derecho → <strong>Finalizar tarea</strong>.</li>
     </ol>
   </div>
   <div class="tip">
-    <strong>Tip:</strong> Si prefiere desactivar todas las notificaciones de una vez,
-    apague el interruptor principal <em>"Recibir notificaciones de aplicaciones y otros
-    remitentes"</em> en la misma pantalla.
+    <strong>Nota:</strong> si al presionar <strong>Q</strong> no pasa nada, el foco quedó en
+    otra ventana. Vuelva a hacer clic sobre la pantalla de publicidad e intente de nuevo.
   </div>
 
-  <h2>9. Actualizar el contenido de publicidad</h2>
+  <h2>8. Actualizar el contenido de publicidad</h2>
   <ol>
     <li>Copie los nuevos archivos (<code>.mp4</code>, <code>.jpg</code>, <code>.png</code>)
         a <code>C:\Users\Public\relco_videos\</code>.</li>
     <li>Elimine o renombre los archivos que ya no deban reproducirse.</li>
-    <li>Cierre VLC desde el icono del área de notificaciones (clic derecho → Salir).</li>
+    <li>Cierre la publicidad: clic sobre la pantalla secundaria y tecla <strong>Q</strong>
+        (sección 7).</li>
     <li>Haga doble clic en el acceso directo <strong>"Publicidad RELCO"</strong> del
         escritorio para reiniciar con la nueva lista.</li>
   </ol>
 
-  <h2>10. Parámetros configurables</h2>
+  <h2>9. Parámetros configurables</h2>
   <p>Los siguientes valores se pueden ajustar editando las primeras líneas del script:</p>
   <table>
     <tr><th>Variable</th><th>Valor por defecto</th><th>Descripción</th></tr>
@@ -368,13 +369,19 @@
   <p>Tras cualquier cambio en el script, vuelva a ejecutarlo con <code>-Setup</code>
   para reinstalar los accesos directos.</p>
 
-  <h2>11. Solución de problemas</h2>
+  <h2>10. Solución de problemas</h2>
   <table>
     <tr><th>Síntoma</th><th>Causa probable</th><th>Solución</th></tr>
     <tr>
-      <td>VLC no arranca al encender el PC</td>
+      <td>La publicidad no arranca al encender el PC</td>
       <td>Acceso directo de inicio automático no creado</td>
       <td>Ejecutar el script con <code>-Setup</code></td>
+    </tr>
+    <tr>
+      <td>Cartel "mpv requerido" / "mpv no encontrado"</td>
+      <td>mpv no está descomprimido en una ruta esperada</td>
+      <td>Verificar que exista <code>C:\Program Files\mpv\mpv.exe</code>
+          (o <code>C:\Users\Public\mpv\mpv.exe</code>) y volver a ejecutar</td>
     </tr>
     <tr>
       <td>Pantalla negra / sin contenido</td>
@@ -405,28 +412,31 @@
       <td>Aumentar el valor en el script y relanzar</td>
     </tr>
     <tr>
-      <td>VLC aparece en la barra de tareas</td>
+      <td>mpv aparece en la barra de tareas</td>
       <td>Error al ocultar la ventana</td>
-      <td>Cerrar y relanzar desde el acceso directo</td>
+      <td>Cerrar con <strong>Q</strong> y relanzar desde el acceso directo</td>
     </tr>
     <tr>
-      <td>VLC no se encuentra</td>
-      <td>VLC no instalado o en ruta no estándar</td>
-      <td>Reinstalar VLC Media Player</td>
+      <td>Necesita enviar un diagnóstico a soporte</td>
+      <td>—</td>
+      <td>El script deja un registro por día en
+          <code>%TEMP%\relco_publicidad\</code> (Win + R → <code>%TEMP%\relco_publicidad</code>).
+          Adjunte el archivo <code>.log</code> de la fecha del problema.</td>
     </tr>
   </table>
 
-  <h2>12. Desinstalación</h2>
+  <h2>11. Desinstalación</h2>
   <ol>
-    <li>Cierre VLC desde el icono del área de notificaciones.</li>
+    <li>Cierre la publicidad (sección 7).</li>
     <li>Elimine el acceso directo del <strong>Escritorio</strong>: <code>Publicidad RELCO.lnk</code></li>
     <li>Elimine el acceso directo de inicio automático en:<br>
         <code>C:\Users\&lt;usuario&gt;\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\</code></li>
-    <li>Elimine <code>C:\Users\Public\vlc-publicidad.ps1</code> si lo desea.</li>
+    <li>Elimine <code>C:\Users\Public\mpv-publicidad.ps1</code> si lo desea.</li>
+    <li>Opcional: elimine la carpeta <code>C:\Program Files\mpv\</code> para quitar el reproductor.</li>
   </ol>
 
   <div class="footer">
-    Publicidad RELCO &nbsp;·&nbsp; RELCO Systems LLC &nbsp;·&nbsp; Abril 2026<br>
+    Publicidad RELCO &nbsp;·&nbsp; RELCO Systems LLC &nbsp;·&nbsp; Noviembre 2026<br>
     Descargue la última versión del script en:
     <strong>github.com/Relco-Systems-LLC/relco-publicidad-win</strong><br>
     Para soporte técnico contacte a su administrador de sistemas.
