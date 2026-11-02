@@ -160,6 +160,20 @@
     .cover { height: 100vh; }
     h2 { page-break-after: avoid; }
   }
+
+  @page {
+    margin: 18mm 16mm 18mm 16mm;
+    @bottom-center {
+      content: counter(page);
+      font-family: 'Inter', Arial, sans-serif;
+      font-size: 9pt;
+      color: #888;
+    }
+  }
+  @page :first {
+    margin: 0;
+    @bottom-center { content: ""; }
+  }
 </style>
 </head>
 <body>
